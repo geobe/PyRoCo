@@ -1,3 +1,3 @@
 from .interface import IMotorControl
-from .controller import BasicMotorControl
+from .motor_control import BasicMotorControl
 from .gpio_config import DigitalOutput, Pwm

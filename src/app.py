@@ -1,9 +1,11 @@
 from flask import Flask, request, render_template
 # from flask_socketio import SocketIO, emit
 from rover import BasicMotorControl, IMotorControl
+from controller import InputController
 
 app = Flask(__name__)
 mc = BasicMotorControl()
+ctrl = InputController()
 # socketio = SocketIO(app)
 
 clients = set()
@@ -43,6 +45,11 @@ def control():
 # WebSocket mit werkzeug.serving für Entwicklung (kein Produktionsbetrieb)
 from flask_sock import Sock
 sock = Sock(app)
+
+@app.route("/command", methods=["POST"])
+def command():
+    ctrl.handleCommand(request)
+    return ("", 204)  # kein direktes Update für den Sender
 
 @sock.route("/ws")
 def websocket(ws):
