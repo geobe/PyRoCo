@@ -1,0 +1,24 @@
+[project]
+name = "rover"
+version = "0.1.0"
+description = "very basic motor control"
+authors = [
+    {name = "Georg Beier",email = "geobe.whz@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "gpiozero (>=2.0.1,<3.0.0)",
+    "lgpio (>=0.2.2.0,<0.3.0.0)",
+    "flask (>=3.1.1,<4.0.0)",
+    "flask-socketio (>=5.5.1,<6.0.0)",
+    "flask-sock (>=0.7.0,<0.8.0)"
+]
+
+[tool.poetry]
+packages = [{include = "rover", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
