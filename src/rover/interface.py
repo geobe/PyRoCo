@@ -6,6 +6,7 @@ class IMotorControl(ABC):
     class Side(Enum):
         LEFT = auto()
         RIGHT = auto()
+        BOTH = auto()
 
     class Motion(Enum):
         FORWARD = auto()

@@ -1,23 +1,41 @@
+{% macro button(side='LEFT', cmd='STOP', val=0, color='w3-red', symbol='boxtimes') %}
+<label class="w3-button {{color}}"
+       hx-post="/command" hx-vars="side:'{{side}}', command:'{{cmd}}', value:{{val}}"
+>&{{symbol}};</label>
+{%- endmacro %}
+
 <table class="w3-centered" width="300px">
     <tr>
-    <th>Links</th><th>Beide</th><th>Rechts</th>
+        <th>Links</th>
+        <th>Beide</th>
+        <th>Rechts</th>
+    </tr>
+    <tr><th colspan="3">Richtung</th></tr>
+    <tr>
+        <td>{{ button('LEFT', 'FORWARD', 10, 'w3-green', 'xwedge') }}</td>
+        <td>{{ button('BOTH', 'FORWARD', 10, 'w3-green', 'xwedge') }}</td>
+        <td>{{ button('RIGHT', 'FORWARD', 10, 'w3-green', 'xwedge') }}</td>
     </tr>
     <tr>
-        <td><label class="w3-button w3-green"
-            hx-post="/command" hx-vars="side:'LEFT', increment:10"
-        >&xwedge;</label></td>
-        <td><label class="w3-button w3-green">&xwedge;</label></td>
-        <td><label class="w3-button w3-green">&xwedge;</label></td>
+        <td>{{ button() }}</td>
+        <td>{{ button('BOTH') }}</td>
+        <td>{{ button('RIGHT') }}</td>
     </tr>
     <tr>
-        <td><label class="w3-button w3-red">&boxtimes;</label></td>
-        <td><label class="w3-button w3-red">&boxtimes;</label></td>
-        <td><label class="w3-button w3-red">&boxtimes;</label></td>
+        <td>{{ button('LEFT', 'BACKWARD', 10, 'w3-green', 'xvee') }}</td>
+        <td>{{ button('BOTH', 'BACKWARD', 10, 'w3-green', 'xvee') }}</td>
+        <td>{{ button('RIGHT', 'BACKWARD', 10, 'w3-green', 'xvee') }}</td>
+    </tr>
+    <tr><th colspan="3">Geschwindigkeit</th></tr>
+    <tr>
+        <td>{{ button('LEFT', 'PLUS', 10, 'w3-lime', 'plus') }}</td>
+        <td>{{ button('BOTH', 'PLUS', 10, 'w3-lime', 'plus') }}</td>
+        <td>{{ button('RIGHT', 'PLUS', 10, 'w3-lime', 'plus') }}</td>
     </tr>
     <tr>
-        <td><label class="w3-button w3-green">&xvee;</label></td>
-        <td><label class="w3-button w3-green">&xvee;</label></td>
-        <td><label class="w3-button w3-green">&xvee;</label></td>
+        <td>{{ button('LEFT', 'MINUS', 10, 'w3-orange', 'minus') }}</td>
+        <td>{{ button('BOTH', 'MINUS', 10, 'w3-orange', 'minus') }}</td>
+        <td>{{ button('RIGHT', 'MINUS', 10, 'w3-orange', 'minus') }}</td>
     </tr>
     <tr>
         <td><input type="number" width="5em" min="0" max="100"></td>
@@ -25,4 +43,3 @@
         <td><input type="number" width="5em" min="0" max="100"></td>
     </tr>
 </table>
-

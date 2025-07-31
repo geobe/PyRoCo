@@ -10,26 +10,6 @@
 <body hx-ext="ws" ws-connect="/ws">
     <h1>Motorsteuerung</h1>
     {% include "buttonrow.html" %}
-    <form hx-post="/control">
-        <label for="side">Seite:</label>
-        <select name="side" id="side">
-            <option value="LEFT">Links</option>
-            <option value="RIGHT">Rechts</option>
-        </select><br><br>
-
-        <label for="motion">Bewegung:</label>
-        <select name="motion" id="motion">
-            <option value="FORWARD">Vorwärts</option>
-            <option value="STOP">Stop</option>
-            <option value="BACKWARD">Rückwärts</option>
-        </select><br><br>
-
-        <label for="speed">Geschwindigkeit (0–100):</label>
-        <input type="number" name="speed" id="speed" min="0" max="100" value="50"><br><br>
-
-        <button type="submit">Senden</button>
-    </form>
-
     <div id="status" ws-replace>
         {% include "status.html" %}
     </div>
