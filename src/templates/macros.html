@@ -1,0 +1,12 @@
+{% macro button(side='LEFT', cmd='STOP', val=0, color='w3-red', symbol='boxtimes', post='command', style='') %}
+<label class="w3-button {{color}}" style="{{style}}"
+       hx-post="/{{post}}" hx-vars="side:'{{side}}', command:'{{cmd}}', value:{{val}}"
+>&{{symbol}};</label>
+{%- endmacro %}
+
+{% macro control_button(cmd='STOP', val=0, color='w3-red', symbol='boxtimes', post='command', scope='steering', style='') %}
+<label class="w3-button {{color}}" style="{{style}}"
+       hx-post="/{{post}}" hx-vars="command:'{{cmd}}', value:{{val}}"
+       hx-target="#{{scope}}" hx-swap="outerHTML" hx-include="#{{scope}}"
+>&{{symbol}};</label>
+{%- endmacro %}

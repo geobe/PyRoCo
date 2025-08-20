@@ -1,10 +1,6 @@
-{% macro button(side='LEFT', cmd='STOP', val=0, color='w3-red', symbol='boxtimes') %}
-<label class="w3-button {{color}}"
-       hx-post="/command" hx-vars="side:'{{side}}', command:'{{cmd}}', value:{{val}}"
->&{{symbol}};</label>
-{%- endmacro %}
+{% from 'macros.html' import button %}
 
-<table class="w3-centered" width="300px">
+<table class="w3-centered" width="100%">
     <tr>
         <th>Links</th>
         <th>Beide</th>

@@ -96,11 +96,11 @@ class BasicMotorControl(IMotorControl):
 
     def freq4speed(self, speed, side):
         if speed < 7:
-            result = 2
-        elif speed < 14:
-            result = 4
+            result = 12
+        # elif speed < 14:
+        #     result = 8
         elif speed < 21:
-            result = 8
+            result = 12
         elif speed < 28:
             result = 16
         elif speed < 51:

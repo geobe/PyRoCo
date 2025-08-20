@@ -6,10 +6,12 @@
     <script src="{{ url_for('static', filename='htmx.min.js') }}"></script>
     <script src="{{ url_for('static', filename='htmx-ws.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='w3.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
-<body hx-ext="ws" ws-connect="/ws">
+<body hx-ext="ws" ws-connect="/ws" style="max-width:500px">
     <h1>Motorsteuerung</h1>
     {% include "buttonrow.html" %}
+    {% include "steering.html" %}
     <div id="status" ws-replace>
         {% include "status.html" %}
     </div>

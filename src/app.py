@@ -17,31 +17,9 @@ def index():
     #     "left": mc.get_motion(IMotorControl.Side.LEFT),
     #     "right": mc.get_motion(IMotorControl.Side.RIGHT)
     # }
-    return render_template("control.html", status=status)
-
-@app.route("/control", methods=["POST"])
-def control():
-    side = IMotorControl.Side[request.form["side"].upper()]
-    motion = IMotorControl.Motion[request.form["motion"].upper()]
-    speed = float(request.form["speed"])
-
-    print(f"side: {side}, motion: {motion}, speed: {speed} ")
-
-    mc.set_speed(side, speed)
-    mc.set_motion(side, motion)
-    status = {
-        "left": mc.get_motion(IMotorControl.Side.LEFT),
-        "right": mc.get_motion(IMotorControl.Side.RIGHT)
-    }
-
-    # Aktualisiertes Fragment senden
-    fragment = render_template("status.html", status=status)
-    for ws in list(clients):
-        try:
-            ws.send(fragment)
-        except:
-            clients.remove(ws)
-    return ("", 204)  # kein direktes Update für den Sender
+    values = {'SPEED': ctrl.STEPS_SPEED, 'STEER': ctrl.STEPS_STEERING }
+    merged = status | values
+    return render_template("control.html", status=merged)
 
 # WebSocket mit werkzeug.serving für Entwicklung (kein Produktionsbetrieb)
 from flask_sock import Sock
@@ -49,9 +27,26 @@ sock = Sock(app)
 
 @app.route("/command", methods=["POST"])
 def command():
-    to_render = ctrl.handleCommand(request)
+    to_render = ctrl.handle_command(request)
     send_ws(to_render)
     return ("", 204)  # kein direktes Update für den Sender
+
+@app.route("/drive", methods=["POST"])
+def drive():
+    to_render = ctrl.handle_drive(request)
+    file = to_render['file']
+    values = to_render['values']
+    fragment = render_template(file, status=values)
+    send_fragment_ws(fragment)
+    send_ws({'file': 'status.html', 'values': ctrl.get_status()})
+    return ("", 204)  # kein direktes Update für den Sender
+
+def send_fragment_ws(fragment):
+    for ws in list(clients):
+        try:
+            ws.send(fragment)
+        except:
+            clients.remove(ws)
 
 def send_ws(to_render):
     fragment = render_template(to_render["file"], status=to_render["values"])
