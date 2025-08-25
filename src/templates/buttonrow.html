@@ -8,9 +8,9 @@
     </tr>
     <tr><th colspan="3">Richtung</th></tr>
     <tr>
-        <td>{{ button('LEFT', 'FORWARD', 10, 'w3-green', 'xwedge') }}</td>
-        <td>{{ button('BOTH', 'FORWARD', 10, 'w3-green', 'xwedge') }}</td>
-        <td>{{ button('RIGHT', 'FORWARD', 10, 'w3-green', 'xwedge') }}</td>
+        <td>{{ button('LEFT', 'FORWARD', 4, 'w3-green', 'xwedge') }}</td>
+        <td>{{ button('BOTH', 'FORWARD', 4, 'w3-green', 'xwedge') }}</td>
+        <td>{{ button('RIGHT', 'FORWARD', 4, 'w3-green', 'xwedge') }}</td>
     </tr>
     <tr>
         <td>{{ button() }}</td>
@@ -18,24 +18,26 @@
         <td>{{ button('RIGHT') }}</td>
     </tr>
     <tr>
-        <td>{{ button('LEFT', 'BACKWARD', 10, 'w3-green', 'xvee') }}</td>
-        <td>{{ button('BOTH', 'BACKWARD', 10, 'w3-green', 'xvee') }}</td>
-        <td>{{ button('RIGHT', 'BACKWARD', 10, 'w3-green', 'xvee') }}</td>
+        <td>{{ button('LEFT', 'BACKWARD', 4, 'w3-green', 'xvee') }}</td>
+        <td>{{ button('BOTH', 'BACKWARD', 4, 'w3-green', 'xvee') }}</td>
+        <td>{{ button('RIGHT', 'BACKWARD', 4, 'w3-green', 'xvee') }}</td>
     </tr>
     <tr><th colspan="3">Geschwindigkeit</th></tr>
     <tr>
-        <td>{{ button('LEFT', 'PLUS', 10, 'w3-lime', 'plus') }}</td>
-        <td>{{ button('BOTH', 'PLUS', 10, 'w3-lime', 'plus') }}</td>
-        <td>{{ button('RIGHT', 'PLUS', 10, 'w3-lime', 'plus') }}</td>
+        <td>{{ button('LEFT', 'PLUS', 4, 'w3-lime', 'plus') }}</td>
+        <td>{{ button('BOTH', 'PLUS', 4, 'w3-lime', 'plus') }}</td>
+        <td>{{ button('RIGHT', 'PLUS', 4, 'w3-lime', 'plus') }}</td>
     </tr>
     <tr>
-        <td>{{ button('LEFT', 'MINUS', 10, 'w3-orange', 'minus') }}</td>
-        <td>{{ button('BOTH', 'MINUS', 10, 'w3-orange', 'minus') }}</td>
-        <td>{{ button('RIGHT', 'MINUS', 10, 'w3-orange', 'minus') }}</td>
+        <td>{{ button('LEFT', 'MINUS', 4, 'w3-orange', 'minus') }}</td>
+        <td>{{ button('BOTH', 'MINUS', 4, 'w3-orange', 'minus') }}</td>
+        <td>{{ button('RIGHT', 'MINUS', 4, 'w3-orange', 'minus') }}</td>
     </tr>
+    </tr>
+    <tr><th colspan="3">Frequenz</th></tr>
     <tr>
-        <td><input type="number" width="5em" min="0" max="100"></td>
-        <td>&nbsp;</td>
-        <td><input type="number" width="5em" min="0" max="100"></td>
+    <tr>
+        <td colspan="3">{{ button('BOTH', 'UP', 1, 'w3-lime', 'plus') }}&nbsp;
+            {{ button('BOTH', 'DOWN', 1, 'w3-orange', 'minus') }}</td>
     </tr>
 </table>

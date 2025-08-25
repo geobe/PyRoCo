@@ -26,8 +26,12 @@ class BasicMotorControl(IMotorControl):
             self.Side.LEFT: 2,
             self.Side.RIGHT: 2
         }
+        self.auto_frequency = True
         for pwm_pin in self.pwm.values():
             pwm_pin.off()
+
+    def set_auto_frequency(self, val: bool):
+        self.auto_frequency = val
 
     def forward(self, side):
         pins = self.dout[side]
@@ -95,17 +99,23 @@ class BasicMotorControl(IMotorControl):
             sys.exit(0)
 
     def freq4speed(self, speed, side):
-        if speed < 7:
-            result = 12
-        # elif speed < 14:
-        #     result = 8
-        elif speed < 21:
-            result = 12
+        if not self.auto_frequency:
+            result = self.freq[side]
+        elif speed < 6:
+            result = 1
+        elif speed < 12:
+            result = 4
+        elif speed < 16:
+            result = 7
+        elif speed < 24:
+            result = 15
         elif speed < 28:
-            result = 16
+            result = 20
+        elif speed < 33:
+            result = 25
         elif speed < 51:
             result = 32
         else:
-            result = 32
+            result = 64
         self.freq[side] = result
         return result
