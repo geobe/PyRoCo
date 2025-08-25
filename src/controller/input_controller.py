@@ -18,9 +18,10 @@ class InputController:
         # mc = motor_controller
         self.STEPS_SPEED = 10
         self.STEPS_STEERING = 20
+        self.RATIO_STEERING = 4
 
     def handle_command(self, request):
-        print(f"form: {request.form}")
+        #print(f"form: {request.form}")
         side = iMC.Side[request.form["side"].upper()]
         speed = float(request.form["value"])
         command = CMD[request.form["command"].upper()]
@@ -65,7 +66,7 @@ class InputController:
         return {'file': "status.html", 'values': self.get_status()}
 
     def handle_drive(self, request):
-        print(f"form: {request.form}")
+       # print(f"form: {request.form}")
         if 'command' in request.form:
            cmd = request.form['command']
         else:
@@ -86,12 +87,12 @@ class InputController:
                 speed += int(value)
             elif cmd == 'STOP':
                 speed = 0
-        direction = direction_input / self.STEPS_STEERING
+        direction = direction_input / self.RATIO_STEERING
         if speed == 0:
             driver.stop()
         else:
             driver.control(speed, direction)
-        values = {"speed": speed, 'direction': direction,
+        values = {"speed": speed, 'direction': direction_input,
                   'SPEED': self.STEPS_SPEED, 'STEER': self.STEPS_STEERING}
         return {'file': "steering.html", 'values': values}
 

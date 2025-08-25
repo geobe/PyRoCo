@@ -49,6 +49,7 @@ class CarDriver:
             v = self.v[speed]
             sign = (1 if direction >= 0 else -1) * (1 if speed >= 0.0 else -1)
             s = self.v_for_steering(v, direction)
+            print(f"speed: {speed} -> v: {v}, direction {direction} -> direct {s}")
             if sign == 1:
                 self.direct[LEFT] = s[0]
                 self.direct[RIGHT] = s[1]

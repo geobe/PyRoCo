@@ -17,7 +17,7 @@ def index():
     #     "left": mc.get_motion(IMotorControl.Side.LEFT),
     #     "right": mc.get_motion(IMotorControl.Side.RIGHT)
     # }
-    values = {'SPEED': ctrl.STEPS_SPEED, 'STEER': ctrl.STEPS_STEERING }
+    values = {'SPEED': ctrl.STEPS_SPEED, 'STEER': ctrl.STEPS_STEERING}
     merged = status | values
     return render_template("control.html", status=merged)
 
