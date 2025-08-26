@@ -8,12 +8,16 @@ FORWARD = IMotorControl.Motion.FORWARD
 BACKWARD = IMotorControl.Motion.BACKWARD
 STOP = IMotorControl.Motion.STOP
 DIRMAX = 5.0
+DIRSWAP = 4.01
 VMAX = 100
+VMIN = 30
+VRANGE = VMAX - VMIN
+
 
 class CarDriver:
     def __init__(self, mc: BasicMotorControl):
         self.mc = mc
-        self.v = [0, 15, 20, 25, 33, 41, 50, 60, 70, 80, 90]
+        self.v = [0, 30, 40, 45, 50, 55, 60, 65, 70, 80, 90]
         self.balance = {LEFT: 0, RIGHT: 0}
         self.direct = {LEFT: 0, RIGHT: 0}
         self.speed = 0
@@ -24,6 +28,7 @@ class CarDriver:
         spix = abs(speed)
         sp_l = self.v[spix] * sign + self.balance[LEFT] + self.direct[LEFT]
         sp_r = self.v[spix] * sign + self.balance[RIGHT] + self.direct[RIGHT]
+        print(f"go - speed: {self.v[spix]}, spl: {sp_l}, spr: {sp_r}")
         self.mc.set_speed(LEFT, abs(sp_l))
         self.mc.set_speed(RIGHT, abs(sp_r))
         if sp_l < 0:
@@ -61,17 +66,16 @@ class CarDriver:
 
     def v_for_steering(self, v: int, direction: float):
         """v: speed 0 ... 100, direction: -5.0 ... 5.0"""
+
         direction = abs(direction)
-        v_plus = int((DIRMAX / 2 - abs(DIRMAX / 2 - direction)) * (VMAX / 20))
-        gradient = 0
-        if direction <= 3:
-            gradient = - direction * 0.2
-            val = v * gradient
+        if direction <= DIRSWAP:
+            alpha = (direction / DIRSWAP)
+            v_minus = -v * alpha * (v - VMIN) / VRANGE
         else:
-            gradient = - (direction - 3.0) * 0.7
-            val = v * (-0.6 + gradient)
-        v_minus = int(round(val))
-        return [v_plus, v_minus]
+            alpha = (DIRMAX - direction) / (DIRMAX - DIRSWAP)
+            v_minus = -2 * v + v * alpha * (v - VMIN) / VRANGE
+        v_plus = v * alpha * (VMAX - v) / VRANGE
+        return [int(v_plus), int(v_minus)]
 
 def test_run():
     mc = BasicMotorControl()
@@ -79,11 +83,11 @@ def test_run():
     for speed_in in range(4, 10, 5):
         speed = driver.v[speed_in]
         print(f"speed: {speed}")
-        for dir in [0, 10, 25, 35, 40, 42, 44, 46, 48, 50]: # range(0, 51, 10):
-            vp = driver.v_for_steering(speed, dir/10.)
+        for dir in [0, 10, 25, 35, 40, 42, 44, 46, 48, 50]:  # range(0, 51, 10):
+            vp = driver.v_for_steering(speed, dir / 10.)
             driver.direct[LEFT] = vp[0]
             driver.direct[RIGHT] = vp[1]
-            print(f"direction: {dir} -> direct: {vp}")
+            print(f"direction: {dir / 10.} -> direct: {vp}")
             driver.go(speed_in)
             l = mc.get_motion(LEFT)
             r = mc.get_motion(RIGHT)
