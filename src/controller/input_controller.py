@@ -1,5 +1,5 @@
 from rover.motor_control import BasicMotorControl, IMotorControl as iMC
-from rover.car_driver import CarDriver
+from rover.car_driver import CarDriver, DIRMAX
 # from flask import Flask, request, render_template
 from enum import Enum, auto
 
@@ -20,7 +20,7 @@ class InputController:
         # mc = motor_controller
         self.STEPS_SPEED = 10
         self.STEPS_STEERING = 20
-        self.RATIO_STEERING = 4
+        self.RATIO_STEERING = int(self.STEPS_STEERING / DIRMAX)
 
     def handle_command(self, request):
         #print(f"form: {request.form}")
@@ -88,7 +88,7 @@ class InputController:
         return {'file': "status.html", 'values': self.get_status()}
 
     def handle_drive(self, request):
-       # print(f"form: {request.form}")
+        print(f"form: {request.form}")
         if 'command' in request.form:
            cmd = request.form['command']
         else:
@@ -99,21 +99,22 @@ class InputController:
             value = 0
         direction_input = int(request.form["direction"])
         speed = int(request.form["speed"])
-        print(f"direction_input: {direction_input}, speed: {speed}")
+        direction = direction_input / self.RATIO_STEERING
         if cmd:
             cmd = cmd.upper()
             print(f"cmd: {cmd}, value: {value}")
             if cmd == 'DIRECTION':
                 direction_input += int(value)
+                direction = direction_input / self.RATIO_STEERING
             elif cmd == 'SPEED':
                 speed += int(value)
             elif cmd == 'STOP':
                 speed = 0
-        direction = direction_input / self.RATIO_STEERING
         if speed == 0:
             driver.stop()
         else:
             driver.control(speed, direction)
+        print(f"form direction: {int(request.form['direction'])}, direction_input: {direction_input} -> direction: {direction}, speed: {speed}")
         values = {"speed": speed, 'direction': direction_input,
                   'SPEED': self.STEPS_SPEED, 'STEER': self.STEPS_STEERING}
         return {'file': "steering.html", 'values': values}

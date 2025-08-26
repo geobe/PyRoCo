@@ -48,20 +48,16 @@ class CarDriver:
         """control car speed and direction: speed in -10..10, direction in -5.0..5.0"""
         if speed == 0:
             self.go(0)
-            # self.direct[LEFT] = 0
-            # self.direct[RIGHT] = 0
         else:
             v = self.v[speed]
             sign = (1 if direction >= 0 else -1) * (1 if speed >= 0.0 else -1)
             s = self.v_for_steering(v, direction)
-            print(f"speed: {speed} -> v: {v}, direction {direction} -> direct {s}")
             if sign == 1:
                 self.direct[LEFT] = s[0]
                 self.direct[RIGHT] = s[1]
             else:
                 self.direct[LEFT] = s[1]
                 self.direct[RIGHT] = s[0]
-            print(f"speed: {speed}, steering: {s}, ")
             self.go(speed)
 
     def v_for_steering(self, v: int, direction: float):
