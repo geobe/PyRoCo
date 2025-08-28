@@ -32,7 +32,7 @@ class StepperMotor:
 
         # defining stepper motor sequence (
         # found in documentation http://www.4tronix.co.uk/arduino/Stepper-Motors.php)
-    def run_steps(self, step_count = STEPDEFAULT, delay = 0.005, truncate = True, eval=lambda a: True):
+    def run_steps(self, step_count = STEPDEFAULT, delay = 0.005, delay2=0.005, truncate = True, eval=lambda a: True):
             if truncate and step_count > STEPLIMIT:
                 step_count = STEPDEFAULT
             elif truncate and step_count < -STEPLIMIT:
@@ -43,22 +43,23 @@ class StepperMotor:
             # sequence_count = len(step_sequence) * step_count
             for i in range(step_count):
                 if forward:
-                    self.motor_step += 1
                     self.motor_sequence_index = i % 8
+                    self.motor_step += 1
                 else:
-                    self.motor_step -= 1
                     self.motor_sequence_index = 7 - i % 8
+                    self.motor_step -= 1
                 sequence = step_sequence[self.motor_sequence_index]
                 for pin in range(len(sequence)):
                     if(sequence[pin]):
                         self.motor_pins[pin].on()
                     else:
                         self.motor_pins[pin].off()
-                sleep(delay)
-                if eval(self.motor_step):
-                    continue
+                if not i % 4:
+                    sleep(delay2)
+                    if not eval(self.motor_step):
+                        break
                 else:
-                    break
+                    sleep(delay)
 
     def run_zero(self):
         # print(f"stepcount: {self.motor_step}")
@@ -68,16 +69,5 @@ class StepperMotor:
     def set_zero(self):
         self.motor_step = self.motor_sequence_index
         self.run_zero()
-
-if __name__ == "__main__":
-    try:
-        stepper = StepperMotor()
-        stepper.run_steps(STEPDEFAULT, delay=0.01)
-
-    except KeyboardInterrupt:
-        print("interrupted")
-    finally:
-        stepper.set_zero()
-        print(f"final stepcount: {stepper.motor_step}")
 
 

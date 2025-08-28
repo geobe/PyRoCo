@@ -1,5 +1,5 @@
-from distance_sensor import SonarSensor
-from stepper_motor import StepperMotor, STEPDEFAULT
+from .distance_sensor import SonarSensor
+from .stepper_motor import StepperMotor, STEPDEFAULT
 from time import sleep
 
 class Sonar:
@@ -8,14 +8,14 @@ class Sonar:
         self.motor = StepperMotor()
 
     # find the zero position by identifying an object straight ahead
-    def center_calibrate(self, far_limit=0.5):
+    def center_calibrate(self, far_limit=0.4, scan_range=STEPDEFAULT):
         scout = Scout(sensor=self.sensor, limit=far_limit)
         print('Distance: ', self.sensor.gpio_sensor.distance * 100)
         sleep(1)
         # look at minus side for marker echo
-        self.motor.run_steps(step_count=STEPDEFAULT)
+        self.motor.run_steps(step_count=scan_range)
         sleep(1)
-        self.motor.run_steps(step_count=-2*STEPDEFAULT, delay=0.01, eval=scout.find_in_range, truncate=False)
+        self.motor.run_steps(step_count=-2*scan_range, delay=0.005, delay2=0.02, eval=scout.find_in_range, truncate=False)
         center = (scout.limitPlus + scout.limitMinus) // 2
         print(f"limits: {scout.limitPlus}, {scout.limitMinus} -> center {center}")
         sleep(1)
@@ -38,7 +38,7 @@ class Scout:
 
     def find_in_range(self, position):
         distance = self.sensor.distance
-        if position % 32 == 0:
+        if position + 1 % 64 == 0 or position - 1 % 64 == 0 or self.found:
             print(f"{'found' if self.found else 'not found'} - {position}: {distance}")
         if distance < self.limit and not self.found:
             # first hit of target
@@ -62,4 +62,4 @@ class Scout:
 
 if __name__ == "__main__":
     sonar = Sonar()
-    sonar.center_calibrate()
+    sonar.center_calibrate(scan_range= 2 * STEPDEFAULT // 3)

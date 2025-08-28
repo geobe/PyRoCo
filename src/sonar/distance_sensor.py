@@ -2,8 +2,8 @@ from gpiozero import DistanceSensor
 from time import sleep
 
 class SonarSensor:
-    def __init__(self, max_distance=3.0, threshold_distance=0.3, queue_len=4):
-        self.gpio_sensor = DistanceSensor(trigger=14, echo=15,
+    def __init__(self, max_distance=3.0, threshold_distance=0.3, queue_len=8):
+        self.gpio_sensor = DistanceSensor(trigger=15, echo=14,
                                           max_distance=max_distance,
                                           threshold_distance=threshold_distance,
                                           queue_len=queue_len)
@@ -19,12 +19,13 @@ class SonarSensor:
         fset=_set_md)
 
     def check(self):
+        print("Start checking")
         md = 1.0
         while True:
             print(f"Distance: {self.distance * 100}, max: {self.max_distance * 100}")
             self.max_distance = md
-            md -= 0.05
-            if md <= 0.05:
+            md -= 0.1
+            if md <= 0.25:
                 break
             sleep(1)
 

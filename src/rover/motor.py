@@ -7,9 +7,12 @@ class MotorController():
         STOP = auto()
         BACKWARD = auto()
 
-    def __init__(self, pwm:int, dout0:int, dout1:int):
+    def __init__(self, pwm:int, dout0:int, dout1:int, inverse = False):
         self.pwm = Pwm(pwm)
-        self.dig_out = [DigitalOutput(dout0), DigitalOutput(dout1)]
+        if inverse:
+            self.dig_out = [DigitalOutput(dout1), DigitalOutput(dout0)]
+        else:
+            self.dig_out = [DigitalOutput(dout0), DigitalOutput(dout1)]
         self.motion = self.Motion.STOP
         self.speed = 0.0
         self.frequency = 2
@@ -17,26 +20,27 @@ class MotorController():
 
     def set_auto_frequency(self, val: bool):
         self.auto_frequency = val
+        return self
 
     def forward(self):
         self.dig_out[0].high()
         self.dig_out[1].low()
         if self.speed > 0:
             self.pwm.on(self.speed, self.frequency)
-        return {"speed": self.speed, "motion": self.motion}
+        return self #{"speed": self.speed, "motion": self.motion}
 
     def reverse(self):
         self.dig_out[0].low()
         self.dig_out[1].high()
         if self.speed > 0:
             self.pwm.on(self.speed, self.frequency)
-        return {"speed": self.speed, "motion": self.motion}
+        return self #{"speed": self.speed, "motion": self.motion}
 
     def stop(self):
         self.dig_out[0].low()
         self.dig_out[1].low()
         self.pwm.off()
-        return {"speed": self.speed, "motion": self.motion}
+        return self #{"speed": self.speed, "motion": self.motion}
 
     def set_motion(self, motion):
         self.motion = motion
@@ -65,7 +69,7 @@ class MotorController():
         self.frequency = frequency
         if self.speed > 0:
             self.pwm.on(self.speed, self.frequency)
-        return {"frequency": self.frequency}
+        return self # {"frequency": self.frequency}
 
     def get_frequency(self):
         return {"frequency": self.frequency}
