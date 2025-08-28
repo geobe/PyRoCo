@@ -1,22 +1,31 @@
-from .motor_control import BasicMotorControl
-from .interface import IMotorControl
+# from controller.input_controller import driver
+from .motor import MotorController
+# from .interface import IMotorControl
+from enum import Enum, auto
 from time import sleep
 
-LEFT = IMotorControl.Side.LEFT
-RIGHT = IMotorControl.Side.RIGHT
-FORWARD = IMotorControl.Motion.FORWARD
-BACKWARD = IMotorControl.Motion.BACKWARD
-STOP = IMotorControl.Motion.STOP
+# 2 motors, left & right
+LEFT = auto()
+RIGHT = auto()
+FORWARD = MotorController.Motion.FORWARD
+BACKWARD = MotorController.Motion.BACKWARD
+STOP = MotorController.Motion.STOP
+# parameters for motor speed and steering
 DIRMAX = 5.0
 DIRSWAP = 4.01
 VMAX = 100
 VMIN = 30
 VRANGE = VMAX - VMIN
+# pin configuration, bcm numbering
+PWMPINS = [12, 13]
+DOUT0PINS = [23, 24]
+DOUT1PINS = [17, 27]
 
 
 class CarDriver:
-    def __init__(self, mc: BasicMotorControl):
-        self.mc = mc
+    def __init__(self):
+        self.mc = {LEFT: MotorController(PWMPINS[0], DOUT0PINS[0], DOUT1PINS[0]),
+                   RIGHT: MotorController(PWMPINS[1], DOUT0PINS[1], DOUT1PINS[1])}
         self.v = [0, 30, 40, 45, 50, 55, 60, 65, 70, 80, 90]
         self.balance = {LEFT: 0, RIGHT: 0}
         self.direct = {LEFT: 0, RIGHT: 0}
@@ -29,20 +38,20 @@ class CarDriver:
         sp_l = self.v[spix] * sign + self.balance[LEFT] + self.direct[LEFT]
         sp_r = self.v[spix] * sign + self.balance[RIGHT] + self.direct[RIGHT]
         print(f"go - speed: {self.v[spix]}, spl: {sp_l}, spr: {sp_r}")
-        self.mc.set_speed(LEFT, abs(sp_l))
-        self.mc.set_speed(RIGHT, abs(sp_r))
+        self.mc[LEFT].set_speed(abs(sp_l))
+        self.mc[RIGHT].set_speed(abs(sp_r))
         if sp_l < 0:
-            self.mc.set_motion(LEFT, FORWARD)
+            self.mc[LEFT].set_motion(FORWARD)
         else:
-            self.mc.set_motion(LEFT, BACKWARD)
+            self.mc[LEFT].set_motion(BACKWARD)
         if sp_r < 0:
-            self.mc.set_motion(RIGHT, FORWARD)
+            self.mc[RIGHT].set_motion(FORWARD)
         else:
-            self.mc.set_motion(RIGHT, BACKWARD)
+            self.mc[RIGHT].set_motion(BACKWARD)
 
     def stop(self):
-        self.mc.set_motion(LEFT, STOP)
-        self.mc.set_motion(RIGHT, STOP)
+        self.mc[LEFT].set_motion(STOP)
+        self.mc[RIGHT].set_motion(STOP)
 
     def control(self, speed: int, direction: float):
         """control car speed and direction: speed in -10..10, direction in -5.0..5.0"""
@@ -74,8 +83,7 @@ class CarDriver:
         return [int(v_plus), int(v_minus)]
 
 def test_run():
-    mc = BasicMotorControl()
-    driver = CarDriver(mc)
+    driver = CarDriver()
     for speed_in in range(4, 10, 5):
         speed = driver.v[speed_in]
         print(f"speed: {speed}")
@@ -85,17 +93,17 @@ def test_run():
             driver.direct[RIGHT] = vp[1]
             print(f"direction: {dir / 10.} -> direct: {vp}")
             driver.go(speed_in)
-            l = mc.get_motion(LEFT)
-            r = mc.get_motion(RIGHT)
+            l = driver.mc[LEFT].get_motion()
+            r = driver.mc[RIGHT].get_motion()
             print(f"motion left: {l}, right: {r}")
             sleep(5)
     try:
-        mc.stop(LEFT)
-        mc.stop(RIGHT)
+        driver.mc[LEFT].stop()
+        driver.mc[RIGHT].stop()
         print("stopped")
         sleep(1)
-        mc.shutdown(False)
-        sleep(1)
+        # mc.shutdown(False)
+        # sleep(1)
         print("done")
     except:
         print("exeption occured")

@@ -9,7 +9,7 @@ class DigitalOutput:
     #    self.led(off)
     def high(self): self.led.on()
     def low(self): self.led.off()
-    def shutdown(self): self.led.off()
+    def shutdown(self): self.led.close()
 
 # Pwm (pulse width modulation) is PWMLED in gpiozero speech
 class Pwm:
@@ -24,8 +24,8 @@ class Pwm:
         offTime = period - onTime
         # print(f"on: {onTime}, off: {offTime} aus freq: {frequency}, period: {period}, dutycycle: {duty_cycle}")
         self.pwm.blink(onTime, offTime)
-    def off(self): self.pwm.off
-    def shutdown(self): self.off()
+    def off(self): self.pwm.off()
+    def shutdown(self): self.pwm.close()
 #
 # class GpioConfigService:
 #     @staticmethod
