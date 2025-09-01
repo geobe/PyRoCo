@@ -9,7 +9,8 @@ This project addresses pupils of nineth to tenth grade.
 Control a simple rover built from basic Fischer Technik parts, cheap mechanical
 and electronic components with a Raspberry Pi Zero2 and Python programming language. 
  
- ![rover2.png](docs/images/rover2.png)
+<img src="docs/images/rover2.png" alt="a 4WD rover" style="width:50%; height:auto;">
+*A 4WD rover with sonar* 
 
 ### Project Concepts
 When developing a control program—for example, for a model vehicle—you quickly 
