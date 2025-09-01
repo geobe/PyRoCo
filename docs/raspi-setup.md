@@ -61,39 +61,98 @@ Zusätzliche Hardware wird benötigt.
 ## Betriebssystem installieren
 
 Für die bereitgestellten Raspis im Projekt ist Raspbian bookmark bereits installiert. 
-So kann man selber eine passende SD-Karte erstellen:
 
-TODO
+Mit dem [Raspberry Pi Imager](https://www.raspberrypi.com/software/) kann man selber eine passende SD-Karte erstellen:
 
 <p align="left"> 
-<img src="images/RaspiImager1.png" alt="Installationstool für Raspi SD Karten" style="width:30%; height:auto;">
+<img src="images/RaspiImager1.png" alt="Installationstool für Raspi SD Karten" style="width:50%; height:auto;">
 <br/>Raspberry Pi Imager</p>
 
+Für den Raspi Zero2 eignet sich besonders die RASPBERRY PI OS LITE (64 Bit) Version,
+die keine grafische Benutzeroberfläche installiert. Das spart Prozessor Ressourcen. 
+
+Nach dem WEITER Button kann man eine Tabelle öffnen, in der Anpassungen des Betriebssystems
+konfiguriert werden können. Alle Anleitungen verwenden den Nutzernamen *rover* und
+einen ähnlichen Hostnamen. Bei der WiFi-Einrichtung kann die Verbindung zu einem
+lokalen WLAN konfiguriert werden. Eine Hotspot Konfiguration ist hier  nicht möglich.
+
+**Wichtig** ist noch, auf dem Tab *Dienste* den ssh-Server zu aktualisieren (keine Abb.).
+
 <p align="left"> 
-<img src="images/RaspiImagerConfig.png" alt="Installationstool für Raspi SD Karten" style="width:30%; height:auto;">
+<img src="images/RaspiImagerConfig.png" alt="Installationstool für Raspi SD Karten" style="width:50%; height:auto;">
 <br/>Image anpassen</p>
+
+Das Betriebssystem Image kann jetzt auf eine SD Karte geladen werden. Wenn alles stimmt und
+die [Netzwerkumgebung](#netzwerkumgebung-) passt, sollte der Raspi jetzt erstmalig booten und
+im lokalen Netz erreichbar sein. Hat der Raspi also den Netzwerknamen
+'bigrover', dann sollte er mit 'bigrover.local' erreichbar sein.
+Der Befehl 'ping bigrover.local' sollte erfolgreich die Verbindung testen.
+Wenn das nicht klappt, notfalls IP-Adresse verwenden.
+
+> Falls alles nicht klappt, geht alternativ ein Zugriff auf das System mit
+Bildschirm am Mini-HDMI Ausgang und einer Tastatur am USB Hub. Dann kann man mit dem Befehl
+*ifconfig* die eigene IP Adresse auslesen. Falls der ssh server nicht wie oben beschrieben
+installiert wurde, lässt sich die Software mit `sudo apt install openssh-server` auf dem
+Raspi nachinstallieren.
+
+## Weitere Vorbereitungen 
+
+Wenn alles geklappt hat, kann jetzt mit `ssh rover@bigrover.local` eine Terminalumgebung
+auf dem Rover gestartet werden. Die wird zur folgenden Installation verwendet.
+
+### Software für Python-Entwicklung installieren
+
+Unsere Entwicklung verwendet den Package und Dependency Manager *poetry*. 
+Den installiert man am besten mit *pipx*.
+Und pipx installiert man auf dem Raspi mit
+```
+sudo apt update
+sudo apt install pipx
+pipx ensurepath
+```
+und dann
+```
+pipx install poetry
+```
+
+### Ssh Zugang mit privatem Schlüssel einrichten
+
+```
+# Schlüssel auf dem Entwicklungsrechner generieren
+ssh-keygen -t ed25519 -C "name-des-key"
+# Ggf. Dateiname und IP des Zielsystems anpassen
+ssh-copy-id -i ./.ssh/id_ed25519 rover@bigrover.local
+```
+Danach sollte der ssh Zugriff ohne Passworteingabe funktionieren.
 
 ## Raspi Dateisystem lokal einbinden
 
-Der Raspi muss im lokalen Netz erreichbar sein. Hat der Raspi z.B. den Netzwerknamen 'minirover',
-dann sollte er mit 'minirover.local' erreichbar sein.
-Wenn das nicht klappt, notfalls IP-Adresse verwenden.  Der Befehl 'ping minirover.local' sollte
-erfolgreich die Verbindung testen.
+Auf dem Raspi muss außerdem der ssh Server installiert sein (s.o.).
+Das ist bei der beschriebenen Installation der Fall. Falls nicht, 
+ Dazu braucht man allerdings einen Zugriff auf das System, möglicherweise
+über den Mini-HDMI Ausgang und eine Tastatur am USB Hotspot.
 
-Auf dem Raspi muss außerdem der ssh Server installiert sein.
-Das ist normalerweise der Fall. Falls nicht, mit `sudo apt install openssh-server` installieren.
+Die nächsten Schritte werden im Terminalfenster auf dem Linux Entwicklungsrechner
+durchgeführt. Unter Windows sollte es mit dem 
+[Windows Subsystem for Linux (WSL)](https://ubuntu.com/desktop/wsl)
+genauso gehen. 
+Bis auf Schritt 2 sind sie nur einmalig notwendig. Die Kommandos 
+
 1. Auf dem Entwicklungsrechner  das Verzeichnis `~/Development/python/rover` anlegen,
  wenn noch nicht vorhanden:<br/>`mkdir -p ~/Development/python/rover`
-2. **Nur dieser Schritt muss zu Beginn einer Entwicklungs-Session ausgeführt werden!**<br/>
+2. **Nur dieser Schritt muss zu Beginn jeder Entwicklungs-Session ausgeführt werden!**<br/>
  Mit dem Befehl `sshfs` das Raspi Dateisystem in das Verzeichnis
  `~/Development/python/rover` einbinden:<br/>
  ```
- sshfs rover@minirover.local:/home/rover/ ~/Development/python/rover \
+ sshfs rover@bigrover.local:/home/rover/ ~/Development/python/rover \
  -o idmap=user -o uid=$(id -u) -o gid=$(id -g) -o follow_symlinks
  ```
 3. Mit dem Befehl `cd ~/Development/python/rover` sind wir jetzt im Raspi Dateisystem. 
- Dort können wir jetzt mit `mkdir pydev` das Basisverzeichnis für unsere Python Entwicklung anlegen,
+ Dort können wir mit `mkdir pydev` das Basisverzeichnis für unsere Python Entwicklung anlegen,
  wenn wir das nicht schon gemacht haben und mit `cd pydev` in dieses Verzeichnis wechseln.
+
+
+
 5. Hier können wir jetzt die Startversion des Projekts von github in das Verzeichnis `rover` herunterladen.<br/>
  ```
  git clone https://github.com/geobe/PyRoCo.git rover
