@@ -1,6 +1,6 @@
 # Rover Control with Python
 
-## A learning project for object-oriented programming in Python
+## A Learning Project for Object-Oriented Programming in Python
 
 This project addresses pupils of nineth to tenth grade.
 
