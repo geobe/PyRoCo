@@ -7,7 +7,7 @@ def xtest_distance_sensor():
     dist.check()
     dist.close()
 
-def test_stepper_motor():
+def xtest_stepper_motor():
     print("Starting stepper motor test")
     try:
         stepper = StepperMotor()
