@@ -24,6 +24,12 @@ def test_platform():
     # adding it to dictionary
     info["processor name"] = processor_name
 
+    # machine info
+    machine_info = platform.machine()
+
+    # adding it to dictionary
+    info["machine info"] = machine_info
+
     # architectural detail
     architecture_details = platform.architecture()
 
@@ -33,6 +39,11 @@ def test_platform():
     # printing the details
     for i, j in info.items():
         print(i, " - ", j)
+
+    if 'aarch64' in machine_info:
+        print("I'm a raspi!")
+    else:
+        print("Oh no, not a raspi")
 
 if __name__ == "__main__":
     test_platform()
