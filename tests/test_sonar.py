@@ -1,13 +1,13 @@
 from sonar import SonarSensor, StepperMotor, STEPDEFAULT
 
-def xtest_distance_sensor():
+def test_distance_sensor():
     print("Starting sonar sensor test")
     dist = SonarSensor()
     print("SonarSensor constructed")
     dist.check()
     dist.close()
 
-def xtest_stepper_motor():
+def test_stepper_motor():
     print("Starting stepper motor test")
     try:
         stepper = StepperMotor()

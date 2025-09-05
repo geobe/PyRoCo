@@ -1,0 +1,7 @@
+minirover.local
+rover2.local
+bigrover.local
+rover1.local
+rover3.local
+rover4.local
+rover5.local
