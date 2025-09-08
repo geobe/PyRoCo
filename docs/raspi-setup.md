@@ -7,7 +7,7 @@ sinnvoll umgesetzt werden. Der Raspberry Zero2 hat einen WLAN Controller auf dem
 der für die Kommunikation mit dem Enntwicklungsrechener genutzt werden soll. 
 Dazu wird aber je nach Netzwerk-Umgebung eventuell zusätzliche Hardware benötigt.
 Zusätzliche USB Hardware kann über einen Micro-USB-Hub angeschlossen werden.
-![Ein Micro USB Hub mit 4 USB Ports](images/mu_usb_hub.jpg)
+![Ein Micro USB Hub mit 6 USB Ports](images/mu_usb_hub.jpg)
 
 <!-- p align="left"> <img src="images/mu_usb_hub.jpg" alt="Ein Micro USB Hub mit 4 USB Ports" style="width:30%; height:auto;">
 <br/>µUSB Hub</p -->
@@ -76,7 +76,7 @@ konfiguriert werden können. Alle Anleitungen verwenden den Nutzernamen *rover* 
 einen ähnlichen Hostnamen. Bei der WiFi-Einrichtung kann die Verbindung zu einem
 lokalen WLAN konfiguriert werden. Eine Hotspot Konfiguration ist hier  nicht möglich.
 
-**Wichtig** ist noch, auf dem Tab *Dienste* den ssh-Server zu aktualisieren (keine Abb.).
+**Wichtig ist noch, auf dem Tab *Dienste* den ssh-Server zu aktualisieren (keine Abb.).**
 
 <p align="left"> 
 <img src="images/RaspiImagerConfig.png" alt="Installationstool für Raspi SD Karten" style="width:50%; height:auto;">
@@ -94,6 +94,12 @@ Bildschirm am Mini-HDMI Ausgang und einer Tastatur am USB Hub. Dann kann man mit
 *ifconfig* die eigene IP Adresse auslesen. Falls der ssh server nicht wie oben beschrieben
 installiert wurde, lässt sich die Software mit `sudo apt install openssh-server` auf dem
 Raspi nachinstallieren.
+> Der ssh Server muss außerdem freigegeben sein. Bei der Installation (s.o.) ist das
+durch den Haken auf dem Diensta Tab alles geregelt. Sonst kann auf der Kommandozeile
+der Befehl <br>`sudo raspi-config`<br>
+ausgeführt und bei den `Intertfacing Options` der Punkt `ssh` aktiviert werden.
+
+Hier gibt es auch noch [eine ausführliche Anleitung](https://www.heise.de/tipps-tricks/Raspberry-Pi-SSH-einrichten-so-geht-s-4190645.html#SSH%20auf%20dem%20Raspberry%20Pi%20installieren) 
 
 ## Weitere Vorbereitungen 
 
@@ -117,9 +123,13 @@ pipx install poetry
 
 ### Ssh Zugang mit privatem Schlüssel einrichten
 
+Ssh kann einen privaten Schlüssel aus dem Verzeichnis `~/.ssh` verwenden, um die Verbindung 
+ohne Passworteingabe aufzubauen. Für den Schlüssel kann mit der Option `-C Schlüsselname` 
+ein Name angegeben werden. Wenn die Option `-C` nicht verwendet wird, heißt der Schlüssel
+automatisch `id_ed25519`.
 ```
 # Schlüssel auf dem Entwicklungsrechner generieren
-ssh-keygen -t ed25519 -C "name-des-key"
+ssh-keygen -t ed25519
 # Ggf. Dateiname und IP des Zielsystems anpassen
 ssh-copy-id -i ./.ssh/id_ed25519 rover@bigrover.local
 ```
@@ -127,18 +137,13 @@ Danach sollte der ssh Zugriff ohne Passworteingabe funktionieren.
 
 ## Raspi Dateisystem lokal einbinden
 
-Auf dem Raspi muss außerdem der ssh Server installiert sein (s.o.).
-Das ist bei der beschriebenen Installation der Fall. Falls nicht, 
- Dazu braucht man allerdings einen Zugriff auf das System, möglicherweise
-über den Mini-HDMI Ausgang und eine Tastatur am USB Hotspot.
-
 Die nächsten Schritte werden im Terminalfenster auf dem Linux Entwicklungsrechner
 durchgeführt. Unter Windows sollte es mit dem 
 [Windows Subsystem for Linux (WSL)](https://ubuntu.com/desktop/wsl)
 genauso gehen. 
 Bis auf Schritt 2 sind sie nur einmalig notwendig. Die Kommandos 
 
-1. Auf dem Entwicklungsrechner  das Verzeichnis `~/Development/python/rover` anlegen,
+1. Auf dem Entwicklungsrechner das Verzeichnis `~/Development/python/rover` anlegen,
  wenn noch nicht vorhanden:<br/>`mkdir -p ~/Development/python/rover`
 2. **Nur dieser Schritt muss zu Beginn jeder Entwicklungs-Session ausgeführt werden!**<br/>
  Mit dem Befehl `sshfs` das Raspi Dateisystem in das Verzeichnis
@@ -151,10 +156,4 @@ Bis auf Schritt 2 sind sie nur einmalig notwendig. Die Kommandos
  Dort können wir mit `mkdir pydev` das Basisverzeichnis für unsere Python Entwicklung anlegen,
  wenn wir das nicht schon gemacht haben und mit `cd pydev` in dieses Verzeichnis wechseln.
 
-
-
-5. Hier können wir jetzt die Startversion des Projekts von github in das Verzeichnis `rover` herunterladen.<br/>
- ```
- git clone https://github.com/geobe/PyRoCo.git rover
- ```
-6. 
+Weiter geht es jetzt mit der [Projekteinrichtung](project-setup.md)

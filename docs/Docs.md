@@ -2,4 +2,5 @@
 
 ## All documentation (at the moment) in German
 
-- [Projekt einrichten]
+- [Raspberry Pi einrichten](raspi-setup.md)
+- [Projekt einrichten](project-setup.md)

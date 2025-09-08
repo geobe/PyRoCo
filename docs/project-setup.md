@@ -13,7 +13,7 @@ auf der Versionsverwaltungs-Plattform github.
 ## Startversion des Projekts herunterladen
 
 **Voraussetzung:** Raspberry Pi ist verbunden und das 
-[Filesystem wie beschrieben eingebunden](raspi-setup.md)
+[Filesystem wie beschrieben eingebunden](raspi-setup.md#raspi-dateisystem-lokal-einbinden)
 
 1. Mit dem Befehl `cd ~/Development/python/rover` wechseln wir jetzt 
  auf dem Entwicklungsrechner ins Raspi Dateisystem. 
