@@ -1,7 +1,7 @@
 # gpio_config.py
 
 from gpiozero import LED, PWMLED, Device
-from .pin_factory_config import PinFactoryConfigurator
+from .pin_factory_config import EnvironmentConfigurator
 
 # class IoBase:
 #     _initialized = False
@@ -33,7 +33,7 @@ class DigitalOutput():
         :param pin: pin number, BCM numbering
         :param initial_value: on or off
         '''
-        configurator = PinFactoryConfigurator()
+        configurator = EnvironmentConfigurator()
         factory = configurator.get_pin_factory()
         print((f"host: {factory.host} @ factory: {factory}"))
         self.led = LED(pin, initial_value=initial_value, pin_factory=factory)
@@ -53,7 +53,7 @@ class Pwm():
         :param pin: pin number, BCM numbering
         :param frequency: in Hz
         '''
-        configurator = PinFactoryConfigurator()
+        configurator = EnvironmentConfigurator()
         factory = configurator.get_pin_factory()
         print((f"host: {factory.host} @ factory: {factory}"))
         self.pwm = PWMLED(pin, frequency = frequency, pin_factory=factory)

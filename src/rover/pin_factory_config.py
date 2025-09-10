@@ -19,17 +19,17 @@ class SYS(Enum):
     WDW = auto()  # Windows
     # MAC: auto()"pigpio (>=1.78,<2.0.0)",
 
-class Singleton:
-    _instance = None
+# class Singleton:
+#     _instance = None
+#
+#     def __new__(cls, *args, **kwargs):
+#         if cls._instance is None:
+#             print("Erzeuge Instanz")
+#             cls._instance = super().__new__(cls)
+#         return cls._instance
+#
 
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            print("Erzeuge Instanz")
-            cls._instance = super().__new__(cls)
-        return cls._instance
-
-
-class PinFactoryConfigurator:
+class EnvironmentConfigurator:
     '''
     Singleton class
     Configure pin factory for local (raspberry pi)
@@ -43,7 +43,7 @@ class PinFactoryConfigurator:
 
     def __new__(cls, *args, **kwargs):
         '''
-        here we go whenever a constructor ios called
+        here we go whenever a constructor is called
         :param args: constructor args
         :param kwargs: constructor kwargs
         '''
@@ -62,9 +62,10 @@ class PinFactoryConfigurator:
         self.param = '-n' if platform.system().lower() == 'windows' else '-c'
         self._initialized = False
         self.factory = None
+        self.platform = self._my_system()
 
 
-    def my_system(self) -> SYS:
+    def _my_system(self) -> SYS:
         '''
         which  kind of system are we running on
         :return: SYS Enum value for our system
@@ -76,6 +77,9 @@ class PinFactoryConfigurator:
             return SYS.LNX
         else:
             return SYS.WDW
+
+    def get_platform(self) -> SYS:
+        return self.platform
 
     def find_rover(self) -> str:
         rover_list = []
@@ -109,7 +113,7 @@ class PinFactoryConfigurator:
         else:
             # print("finding factory")
             self._initialized = True
-            if self.my_system() == SYS.RASPI:
+            if self.get_platform() == SYS.RASPI:
                 return None #LGPIOFactory(chip=0)
             else:
                 rover = self.find_rover()

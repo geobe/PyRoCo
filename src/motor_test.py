@@ -12,11 +12,11 @@ def xtest_motor():
     motor = []
     for i in range(MOTORS):
         motor.append(MotorController(PWMPINS[i], DOUT0PINS[i], DOUT1PINS[i], INVERSE))
-    for speed in [50, 100]:
+    for speed in [20, 30]:
         for i in range(MOTORS):
             motor[i].set_speed(speed)
             motor[i].forward()
-        sleep(10)
+        sleep(5)
         for i in range(MOTORS):
             motor[i].reverse()
         sleep(10)

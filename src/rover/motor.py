@@ -1,5 +1,6 @@
 from enum import Enum, auto
 from .gpio_config import DigitalOutput, Pwm
+from  .pin_factory_config import EnvironmentConfigurator, SYS
 
 class MotorController():
     class Motion(Enum):
@@ -84,7 +85,10 @@ class MotorController():
             sys.exit(0)
 
     def freq4speed(self, speed):
-        if not self.auto_frequency:
+        configurator = EnvironmentConfigurator()
+        if configurator.get_platform() != SYS.RASPI:
+            result = 1
+        elif not self.auto_frequency:
             result = self.frequency
         elif speed < 6:
             result = 1

@@ -2,4 +2,4 @@ from .interface import IMotorControl
 from .motor_control import BasicMotorControl
 from .motor import MotorController
 from .gpio_config import DigitalOutput, Pwm
-from .pin_factory_config import PinFactoryConfigurator
+from .pin_factory_config import EnvironmentConfigurator
