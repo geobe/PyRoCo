@@ -3,24 +3,6 @@
 from gpiozero import LED, PWMLED, Device
 from .pin_factory_config import EnvironmentConfigurator
 
-# class IoBase:
-#     _initialized = False
-#
-#     @classmethod
-#     def _init_class(cls):
-#         print((f"init IoBase"))
-#         if not cls._initialized:
-#             configurator = PinFactoryConfigurator()
-#             factory = configurator.get_pin_factory()
-#             print((f"host: {factory.host} @ factory: {factory}"))
-#             if factory != None:
-#                 Device.pin_factory = factory
-#             print("Device Factory initialized")
-#             cls._initialized = True
-#
-#     def __init__(self):
-#         IoBase._init_class()   # sorgt dafür, dass es beim ersten Objekt passiert
-#
 
 class DigitalOutput():
     '''

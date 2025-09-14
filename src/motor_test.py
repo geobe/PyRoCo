@@ -16,10 +16,10 @@ def xtest_motor():
         for i in range(MOTORS):
             motor[i].set_speed(speed)
             motor[i].forward()
-        sleep(5)
+        sleep(3)
         for i in range(MOTORS):
             motor[i].reverse()
-        sleep(10)
+        sleep(3)
             # motor[i].stop()
     for i in range(MOTORS):
         motor[i].stop()

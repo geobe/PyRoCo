@@ -1,12 +1,15 @@
 from enum import Enum, auto
 from .gpio_config import DigitalOutput, Pwm
 from  .pin_factory_config import EnvironmentConfigurator, SYS
+from .definitions import Motion
 
 class MotorController():
-    class Motion(Enum):
-        FORWARD = auto()
-        STOP = auto()
-        BACKWARD = auto()
+    # class Motion(Enum):
+    #     FORWARD = auto()
+    #     STOP = auto()
+    #     BACKWARD = auto()
+    #     LEFT = auto()
+    #     RIGHT = auto()
 
     def __init__(self, pwm:int, dout0:int, dout1:int, inverse = False):
         self.pwm = Pwm(pwm)
@@ -14,7 +17,7 @@ class MotorController():
             self.dig_out = [DigitalOutput(dout1), DigitalOutput(dout0)]
         else:
             self.dig_out = [DigitalOutput(dout0), DigitalOutput(dout1)]
-        self.motion = self.Motion.STOP
+        self.motion = Motion.STOP
         self.speed = 0.0
         self.frequency = 2
         self.auto_frequency = True
@@ -45,9 +48,9 @@ class MotorController():
 
     def set_motion(self, motion):
         self.motion = motion
-        if motion == self.Motion.FORWARD:
+        if motion == Motion.FORWARD:
             return self.forward()
-        elif motion == self.Motion.BACKWARD:
+        elif motion == Motion.BACKWARD:
             return self.reverse()
         else:
             return self.stop()

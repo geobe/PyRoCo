@@ -17,17 +17,7 @@ class SYS(Enum):
     RASPI = auto()  # Raspberry Pi
     LNX = auto()  # Linux
     WDW = auto()  # Windows
-    # MAC: auto()"pigpio (>=1.78,<2.0.0)",
-
-# class Singleton:
-#     _instance = None
-#
-#     def __new__(cls, *args, **kwargs):
-#         if cls._instance is None:
-#             print("Erzeuge Instanz")
-#             cls._instance = super().__new__(cls)
-#         return cls._instance
-#
+    # MAC: auto()
 
 class EnvironmentConfigurator:
     '''
@@ -48,11 +38,8 @@ class EnvironmentConfigurator:
         :param kwargs: constructor kwargs
         '''
         if cls._instance is None:
-            # print("create new instance")
             cls._instance = super().__new__(cls)
             cls._instance.init_once()
-        # else:
-        #     print("return existing")
         return cls._instance
 
     def __init__(self):

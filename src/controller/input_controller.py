@@ -1,19 +1,19 @@
-from rover.motor_control import BasicMotorControl, IMotorControl as iMC
-from rover.car_driver import CarDriver, DIRMAX
+from rover.definitions import *
+from rover.car_driver import *
 # from flask import Flask, request, render_template
 from enum import Enum, auto
 
-class CMD(Enum):
-    FORWARD = auto()
-    BACKWARD = auto()
-    STOP = auto()
-    PLUS = auto()
-    MINUS = auto()
-    UP = auto()
-    DOWN = auto()
+# class CMD(Enum):
+#     # FORWARD = auto()
+#     # BACKWARD = auto()
+#     # STOP = auto()
+#     PLUS = auto()
+#     MINUS = auto()
+#     UP = auto()
+#     DOWN = auto()
 
-mc = BasicMotorControl()
-driver = CarDriver(mc)
+driver = CarDriver()
+mc = driver.mc
 
 class InputController:
     def __init__(self):
@@ -24,66 +24,66 @@ class InputController:
 
     def handle_command(self, request):
         #print(f"form: {request.form}")
-        side = iMC.Side[request.form["side"].upper()]
+        side = Motion[request.form["side"].upper()]
         value = float(request.form["value"])
         command = CMD[request.form["command"].upper()]
-        speed_left = mc.get_motion(iMC.Side.LEFT)["speed"]
-        speed_right = mc.get_motion(iMC.Side.RIGHT)["speed"]
-        f_left = max(mc.get_frequency(iMC.Side.LEFT)["frequency"], 1)
-        f_right = max(mc.get_frequency(iMC.Side.RIGHT)["frequency"], 1)
+        speed_left = mc[Motion.LEFT].get_motion()["speed"]
+        speed_right = mc[Motion.RIGHT].get_motion()["speed"]
+        f_left = max(mc[Motion.LEFT].get_frequency()["frequency"], 1)
+        f_right = max(mc[Motion.RIGHT].get_frequency()["frequency"], 1)
         match command:
             case CMD.STOP:
-                if side == iMC.Side.BOTH:
-                    mc.set_motion(iMC.Side.LEFT, iMC.Motion.STOP)
-                    mc.set_motion(iMC.Side.RIGHT, iMC.Motion.STOP)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_motion(Motion.STOP)
+                    mc[Motion.RIGHT].set_motion(Motion.STOP)
                 else:
-                    mc.set_motion(side, iMC.Motion.STOP)
+                    mc[side].set_motion(Motion.STOP)
             case CMD.FORWARD:
-                if side == iMC.Side.BOTH:
-                    mc.set_motion(iMC.Side.LEFT, iMC.Motion.FORWARD)
-                    mc.set_motion(iMC.Side.RIGHT, iMC.Motion.FORWARD)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_motion(Motion.FORWARD)
+                    mc[Motion.RIGHT].set_motion(Motion.FORWARD)
                 else:
-                    mc.set_motion(side, iMC.Motion.FORWARD)
+                    mc[side].set_motion(Motion.FORWARD)
             case CMD.BACKWARD:
-                if side == iMC.Side.BOTH:
-                    mc.set_motion(iMC.Side.LEFT, iMC.Motion.BACKWARD)
-                    mc.set_motion(iMC.Side.RIGHT, iMC.Motion.BACKWARD)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_motion(Motion.BACKWARD)
+                    mc[Motion.RIGHT].set_motion(Motion.BACKWARD)
                 else:
-                    mc.set_motion(side, iMC.Motion.BACKWARD)
+                    mc[side].set_motion(Motion.BACKWARD)
             case CMD.PLUS:
-                if side == iMC.Side.BOTH:
-                    mc.set_speed(iMC.Side.LEFT, speed_left + value)
-                    mc.set_speed(iMC.Side.RIGHT, speed_right + value)
-                if side == iMC.Side.LEFT:
-                    mc.set_speed(iMC.Side.LEFT, speed_left + value)
-                if side == iMC.Side.RIGHT:
-                    mc.set_speed(iMC.Side.RIGHT, speed_right + value)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_speed(speed_left + value)
+                    mc[Motion.RIGHT].set_speed(speed_right + value)
+                if side == Motion.LEFT:
+                    mc[Motion.LEFT].set_speed(speed_left + value)
+                if side == Motion.RIGHT:
+                    mc[Motion.RIGHT].set_speed(speed_right + value)
             case CMD.MINUS:
-                if side == iMC.Side.BOTH:
-                    mc.set_speed(iMC.Side.LEFT, speed_left - value)
-                    mc.set_speed(iMC.Side.RIGHT, speed_right - value)
-                if side == iMC.Side.LEFT:
-                    mc.set_speed(iMC.Side.LEFT, speed_left - value)
-                if side == iMC.Side.RIGHT:
-                    mc.set_speed(iMC.Side.RIGHT, speed_right - value)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_speed(speed_left - value)
+                    mc[Motion.RIGHT].set_speed(speed_right - value)
+                if side == Motion.LEFT:
+                    mc[Motion.LEFT].set_speed(speed_left - value)
+                if side == Motion.RIGHT:
+                    mc[Motion.RIGHT].set_speed(speed_right - value)
             case CMD.UP:
-                mc.set_auto_frequency(False)
-                if side == iMC.Side.BOTH:
-                    mc.set_frequency(iMC.Side.LEFT, max(f_left + value, 1))
-                    mc.set_frequency(iMC.Side.RIGHT, max(f_right + value, 1))
-                if side == iMC.Side.LEFT:
-                    mc.set_frequency(iMC.Side.LEFT, max(f_left + value, 1))
-                if side == iMC.Side.RIGHT:
-                    mc.set_frequency(iMC.Side.RIGHT, max(f_right + value, 1))
+                # mc.set_auto_frequency(False)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_frequency(max(f_left + value, 1))
+                    mc[Motion.RIGHT].set_frequency(max(f_right + value, 1))
+                if side == Motion.LEFT:
+                    mc[Motion.LEFT].set_frequency(max(f_left + value, 1))
+                if side == Motion.RIGHT:
+                    mc[Motion.RIGHT].set_frequency(max(f_right + value, 1))
             case CMD.DOWN:
-                mc.set_auto_frequency(False)
-                if side == iMC.Side.BOTH:
-                    mc.set_frequency(iMC.Side.LEFT, max(f_left - value, 1))
-                    mc.set_frequency(iMC.Side.RIGHT, max(f_right - value, 1))
-                if side == iMC.Side.LEFT:
-                    mc.set_frequency(iMC.Side.LEFT, max(f_left - value, 1))
-                if side == iMC.Side.RIGHT:
-                    mc.set_frequency(iMC.Side.RIGHT, max(f_right - value, 1))
+                # mc.set_auto_frequency(False)
+                if side == Motion.BOTH:
+                    mc[Motion.LEFT].set_frequency(max(f_left - value, 1))
+                    mc[Motion.RIGHT].set_frequency(max(f_right - value, 1))
+                if side == Motion.LEFT:
+                    mc[Motion.LEFT].set_frequency(max(f_left - value, 1))
+                if side == Motion.RIGHT:
+                    mc[Motion.RIGHT].set_frequency(max(f_right - value, 1))
 
         return {'file': "status.html", 'values': self.get_status()}
 
@@ -121,10 +121,10 @@ class InputController:
 
     def get_status(self):
         status = {
-            "left": mc.get_motion(iMC.Side.LEFT),
-            "right": mc.get_motion(iMC.Side.RIGHT),
-            "f_left": mc.get_frequency(iMC.Side.LEFT),
-            "f_right": mc.get_frequency(iMC.Side.RIGHT)
+            "left": mc[Motion.LEFT].get_motion(),
+            "right": mc[Motion.RIGHT].get_motion(),
+            "f_left": mc[Motion.LEFT].get_frequency(),
+            "f_right": mc[Motion.RIGHT].get_frequency()
         }
         return status
 
