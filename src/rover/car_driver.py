@@ -12,9 +12,9 @@ VMAX = 100
 VMIN = 30
 VRANGE = VMAX - VMIN
 # pin configuration, bcm numbering
-PWMPINS = [12, 13]
-DOUT0PINS = [23, 24]
-DOUT1PINS = [17, 27]
+PWMPINS = [13, 12]
+DOUT0PINS = [17, 23]
+DOUT1PINS = [27, 24]
 
 # 2 motors, left & right
 class CarDriver:

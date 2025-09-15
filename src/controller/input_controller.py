@@ -1,16 +1,7 @@
-from rover.definitions import *
+from rover.definitions import Motion
 from rover.car_driver import *
 # from flask import Flask, request, render_template
 from enum import Enum, auto
-
-# class CMD(Enum):
-#     # FORWARD = auto()
-#     # BACKWARD = auto()
-#     # STOP = auto()
-#     PLUS = auto()
-#     MINUS = auto()
-#     UP = auto()
-#     DOWN = auto()
 
 driver = CarDriver()
 mc = driver.mc
@@ -22,99 +13,86 @@ class InputController:
         self.STEPS_STEERING = 20
         self.RATIO_STEERING = int(self.STEPS_STEERING / DIRMAX)
 
-    def handle_command(self, request):
-        #print(f"form: {request.form}")
-        side = Motion[request.form["side"].upper()]
-        value = float(request.form["value"])
-        command = CMD[request.form["command"].upper()]
-        speed_left = mc[Motion.LEFT].get_motion()["speed"]
-        speed_right = mc[Motion.RIGHT].get_motion()["speed"]
-        f_left = max(mc[Motion.LEFT].get_frequency()["frequency"], 1)
-        f_right = max(mc[Motion.RIGHT].get_frequency()["frequency"], 1)
-        match command:
-            case CMD.STOP:
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_motion(Motion.STOP)
-                    mc[Motion.RIGHT].set_motion(Motion.STOP)
-                else:
-                    mc[side].set_motion(Motion.STOP)
-            case CMD.FORWARD:
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_motion(Motion.FORWARD)
-                    mc[Motion.RIGHT].set_motion(Motion.FORWARD)
-                else:
-                    mc[side].set_motion(Motion.FORWARD)
-            case CMD.BACKWARD:
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_motion(Motion.BACKWARD)
-                    mc[Motion.RIGHT].set_motion(Motion.BACKWARD)
-                else:
-                    mc[side].set_motion(Motion.BACKWARD)
-            case CMD.PLUS:
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_speed(speed_left + value)
-                    mc[Motion.RIGHT].set_speed(speed_right + value)
-                if side == Motion.LEFT:
-                    mc[Motion.LEFT].set_speed(speed_left + value)
-                if side == Motion.RIGHT:
-                    mc[Motion.RIGHT].set_speed(speed_right + value)
-            case CMD.MINUS:
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_speed(speed_left - value)
-                    mc[Motion.RIGHT].set_speed(speed_right - value)
-                if side == Motion.LEFT:
-                    mc[Motion.LEFT].set_speed(speed_left - value)
-                if side == Motion.RIGHT:
-                    mc[Motion.RIGHT].set_speed(speed_right - value)
-            case CMD.UP:
-                # mc.set_auto_frequency(False)
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_frequency(max(f_left + value, 1))
-                    mc[Motion.RIGHT].set_frequency(max(f_right + value, 1))
-                if side == Motion.LEFT:
-                    mc[Motion.LEFT].set_frequency(max(f_left + value, 1))
-                if side == Motion.RIGHT:
-                    mc[Motion.RIGHT].set_frequency(max(f_right + value, 1))
-            case CMD.DOWN:
-                # mc.set_auto_frequency(False)
-                if side == Motion.BOTH:
-                    mc[Motion.LEFT].set_frequency(max(f_left - value, 1))
-                    mc[Motion.RIGHT].set_frequency(max(f_right - value, 1))
-                if side == Motion.LEFT:
-                    mc[Motion.LEFT].set_frequency(max(f_left - value, 1))
-                if side == Motion.RIGHT:
-                    mc[Motion.RIGHT].set_frequency(max(f_right - value, 1))
+    def decode_request(self, request) -> dict:
+        print(f"form: {request.form}")
+        values = {}
+        if 'side' in request.form:
+            values['side'] = Motion[request.form["side"].upper()]
+        else:
+            values['side'] = Motion.NONE
+        if 'command' in request.form:
+            values["command"] = Motion[request.form['command'].upper()]
+        else:
+            values["command"] = Motion.NONE
+        if 'value' in request.form:
+            values["value"] = request.form['value']
+        else:
+            values["value"] = '0'
+        if 'speed' in request.form:
+            values['speed'] = int(request.form["speed"])
+        else:
+            values['speed'] = 0
+        if 'direction' in request.form:
+            values["direction"] = int(request.form["direction"])
+        else:
+            values["direction"] = 0
+        return values
+
+    def handle_command(self, values):
+        print(f"side: {values['side']}")
+        side = values['side'] if 'side' in values else Motion.BOTH
+        value = float(values['value']) if 'value' in values else 0.0
+        command = values['command'] if 'command' in values else ''
+        speed = {}
+        speed[Motion.LEFT] = mc[Motion.LEFT].get_motion()["speed"]
+        speed[Motion.RIGHT] = mc[Motion.RIGHT].get_motion()["speed"]
+        f = {}
+        f[Motion.LEFT] = max(mc[Motion.LEFT].get_frequency()["frequency"], 1)
+        f[Motion.RIGHT] = max(mc[Motion.RIGHT].get_frequency()["frequency"], 1)
+        if side == Motion.BOTH:
+            directions = [Motion.LEFT, Motion.RIGHT]
+        else:
+            directions = [side]
+        for dir in directions:
+            match command:
+                case Motion.STOP:
+                    # mc.set_auto_frequency(True)
+                    mc[dir].set_motion(Motion.STOP)
+                case Motion.FORWARD:
+                    mc[dir].set_motion(Motion.FORWARD)
+                case Motion.BACKWARD:
+                    mc[dir].set_motion(Motion.BACKWARD)
+                case Motion.PLUS:
+                    mc[dir].set_speed(speed[dir] + value)
+                case Motion.MINUS:
+                    mc[dir].set_speed(speed[dir] - value)
+                case Motion.UP:
+                    # mc.set_auto_frequency(False)
+                    mc[dir].set_frequency(f[dir] + value)
+                case Motion.DOWN:
+                    # mc.set_auto_frequency(False)
+                    mc[dir].set_frequency(f[dir] - value)
 
         return {'file': "status.html", 'values': self.get_status()}
 
-    def handle_drive(self, request):
-        print(f"form: {request.form}")
-        if 'command' in request.form:
-           cmd = request.form['command']
-        else:
-            cmd = ''
-        if 'value' in request.form:
-            value = request.form['value']
-        else:
-            value = 0
-        direction_input = int(request.form["direction"])
-        speed = int(request.form["speed"])
+    def handle_drive(self, values):
+        cmd = values['command']
+        value = values['value']
+        direction_input = values["direction"]
+        speed = values["speed"]
         direction = direction_input / self.RATIO_STEERING
-        if cmd:
-            cmd = cmd.upper()
-            print(f"cmd: {cmd}, value: {value}")
-            if cmd == 'DIRECTION':
+        match cmd:
+            case Motion.DIRECTION:
                 direction_input += int(value)
                 direction = direction_input / self.RATIO_STEERING
-            elif cmd == 'SPEED':
+            case Motion.SPEED:
                 speed += int(value)
-            elif cmd == 'STOP':
+            case Motion.STOP:
                 speed = 0
         if speed == 0:
             driver.stop()
         else:
             driver.control(speed, direction)
-        print(f"form direction: {int(request.form['direction'])}, direction_input: {direction_input} -> direction: {direction}, speed: {speed}")
         values = {"speed": speed, 'direction': direction_input,
                   'SPEED': self.STEPS_SPEED, 'STEER': self.STEPS_STEERING}
         return {'file': "steering.html", 'values': values}

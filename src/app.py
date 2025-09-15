@@ -27,13 +27,13 @@ sock = Sock(app)
 
 @app.route("/command", methods=["POST"])
 def command():
-    to_render = ctrl.handle_command(request)
+    to_render = ctrl.handle_command(ctrl.decode_request(request))
     send_ws(to_render)
     return ("", 204)  # kein direktes Update für den Sender
 
 @app.route("/drive", methods=["POST"])
 def drive():
-    to_render = ctrl.handle_drive(request)
+    to_render = ctrl.handle_drive(ctrl.decode_request(request))
     file = to_render['file']
     values = to_render['values']
     fragment = render_template(file, status=values)
