@@ -17,7 +17,8 @@ class DigitalOutput():
         '''
         configurator = EnvironmentConfigurator()
         factory = configurator.get_pin_factory()
-        print((f"host: {factory.host} @ factory: {factory}"))
+        if factory:
+            print((f"host: {factory.host} @ factory: {factory}"))
         self.led = LED(pin, initial_value=initial_value, pin_factory=factory)
     #    self.led(off)
     def high(self): self.led.on()
@@ -37,7 +38,8 @@ class Pwm():
         '''
         configurator = EnvironmentConfigurator()
         factory = configurator.get_pin_factory()
-        print((f"host: {factory.host} @ factory: {factory}"))
+        if factory:
+            print((f"host: {factory.host} @ factory: {factory}"))
         self.pwm = PWMLED(pin, frequency = frequency, pin_factory=factory)
 
     def on(self, duty_cycle: int, frequency: int):

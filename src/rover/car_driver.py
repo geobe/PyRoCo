@@ -49,7 +49,7 @@ class CarDriver:
         self.mc[Motion.RIGHT].set_motion(Motion.STOP)
 
     def control(self, speed: int, direction: float):
-        """control car speed and direction: speed in -10..10, direction in -5.0..5.0"""
+        """control car speed and direction: speed in -100..100, direction in -5.0..5.0"""
         if speed == 0:
             self.go(0)
         else:
@@ -67,14 +67,15 @@ class CarDriver:
     def v_for_steering(self, v: int, direction: float):
         """v: speed 0 ... 100, direction: -5.0 ... 5.0"""
 
+        v_abs = abs(v)
         direction = abs(direction)
         if direction <= DIRSWAP:
             alpha = (direction / DIRSWAP)
-            v_minus = -v * alpha * (v - VMIN) / VRANGE
+            v_minus = -v * alpha * (v_abs - VMIN) / VRANGE
         else:
             alpha = (DIRMAX - direction) / (DIRMAX - DIRSWAP)
-            v_minus = -2 * v + v * alpha * (v - VMIN) / VRANGE
-        v_plus = v * alpha * (VMAX - v) / VRANGE
+            v_minus = -2 * v + v * alpha * (v_abs - VMIN) / VRANGE
+        v_plus = v * alpha * (VMAX - v_abs) / VRANGE
         return [int(v_plus), int(v_minus)]
 
 def test_run():
